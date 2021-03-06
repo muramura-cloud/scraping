@@ -5,11 +5,9 @@ import json
 from oauth2client.service_account import ServiceAccountCredentials
 import sys
 
-# エロサイトにアクセスしてデータを取得
-# 「抜きスト」
 nukisuto = Av('https://www.nukistream.com/')
 nukisuto_contents = nukisuto.get_contents()
-# # 「iQoo」
+
 iqoo = Av('https://iqoo.me/')
 iqoo_contents = iqoo.get_contents()
 contents = nukisuto_contents+iqoo_contents

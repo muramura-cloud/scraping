@@ -1,3 +1,5 @@
+import datetime
+import time
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
@@ -10,13 +12,33 @@ class Gspread:
             jsonf, scope)
         gc = gspread.authorize(credentials)
 
-        self.worksheet = gc.open_by_key(SPREADSHEET_KEY).sheet1
+        self.worksheet = gc.open_by_key(SPREADSHEET_KEY)
+
+    def add_sheet(self, title):
+        self.worksheet.add_worksheet(title=title, rows=100, cols=20)
+
+    def delete_sheet(self, ws):
+        self.worksheet.del_worksheet(ws)
+
+    def get_worksheet(self, sheet_name):
+        return self.worksheet.worksheet(sheet_name)
 
     # 二次元配列を受け取ってデータをスプレッドシートに書き込む
     def write(self, contents):
         if not contents:
-            return 
+            return
 
+        # シートがある程度増えてきたらそれを削除する
+        # self.delete_sheet(self.get_worksheet('high_quality_av'))
+
+        # シートを新規作成
+        now = datetime.datetime.today().strftime("%Y/%m/%d %H:%M:%S")
+        self.add_sheet(now)
+
+        # シートに新しいデータを書き込む
+        ws = self.get_worksheet(now)
+        ws.format('A1:D1', {'textFormat': {'bold': True}})
+        ws.update('A1:D1', [['タイトル', 'リンク', '高評価', '高評価率']])
         for i, content in enumerate(contents):
             for j, val in enumerate(content):
-                self.worksheet.update_cell(i+2, j+1, val)
+                ws.update_cell(i+2, j+1, val)

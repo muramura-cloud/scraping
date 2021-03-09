@@ -56,7 +56,8 @@ class Av:
 
             # 高評価が10以上かつ高評価率が0.8以上
             if good >= 10 and good_rate >= 0.8:
-                contents.append([title, link, good, good_rate])
+                contents.append(
+                    [title, link, good, '{:.0%}'.format(good_rate)])
 
         self.driver.quit()
 

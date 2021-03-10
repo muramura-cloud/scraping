@@ -9,7 +9,6 @@ import sys
 def job():
     nukisuto = Av('https://www.nukistream.com/')
     nukisuto_contents = nukisuto.get_contents()
-
     iqoo = Av('https://iqoo.me/')
     iqoo_contents = iqoo.get_contents()
 
@@ -24,8 +23,8 @@ def job():
     gspread.write(contents)
 
 
+# 毎日夜8時に実行する
 schedule.every().day.at('20:00').do(job)
-
 while True:
     schedule.run_pending()
     time.sleep(1)

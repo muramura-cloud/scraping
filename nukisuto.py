@@ -13,7 +13,7 @@ class Nukisuto(Av):
         return links
 
     # 高評価率を求める
-    def get_good_rate(good, bad):
+    def get_good_rate(self, good, bad):
         good_rate = 0
         # 0除算を防ぐため
         if good > 0 or bad > 0:

@@ -1,15 +1,16 @@
-from av import Av
 from Gspread import Gspread
-import json
+from nukisuto import Nukisuto
+from iqoo import Iqoo
+from avgle import Avgle
 import schedule
 import time
 import sys
 
 
 def job():
-    nukisuto = Av('https://www.nukistream.com/')
+    nukisuto = Nukisuto('https://www.nukistream.com/')
     nukisuto_contents = nukisuto.get_contents()
-    iqoo = Av('https://iqoo.me/')
+    iqoo = Iqoo('https://iqoo.me/')
     iqoo_contents = iqoo.get_contents()
 
     contents = nukisuto_contents+iqoo_contents
@@ -21,6 +22,7 @@ def job():
 
     gspread = Gspread(jsonf, spread_sheet_key)
     gspread.write(contents)
+    print('-------------スクレイピング終了--------------')
 
 
 # 毎日夜8時に実行する

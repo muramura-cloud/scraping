@@ -1,7 +1,7 @@
 from Gspread import Gspread
 from nukisuto import Nukisuto
 from iqoo import Iqoo
-from avgle import Avgle
+from pornhub import Pornhub
 import schedule
 import time
 import sys
@@ -12,8 +12,10 @@ def job():
     nukisuto_contents = nukisuto.get_contents()
     iqoo = Iqoo('https://iqoo.me/')
     iqoo_contents = iqoo.get_contents()
+    pornhub = Pornhub('https://jp.pornhub.com/')
+    pornhub_contents = pornhub.get_contents(200, 0.85, '')
 
-    contents = nukisuto_contents+iqoo_contents
+    contents = nukisuto_contents+iqoo_contents+pornhub_contents
 
     # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
     jsonf = 'av-sheet-5e65e23ebfc9.json'

@@ -12,22 +12,12 @@ class Nukisuto(Av):
 
         return links
 
-    # 高評価率を求める
-    def get_good_rate(self, good, bad):
-        good_rate = 0
-        # 0除算を防ぐため
-        if good > 0 or bad > 0:
-            good_rate = round(good / (good + bad), 2)
-
-        return good_rate
-
     # Avコンテンツを取得
-    def get_contents(self):
-        self.open_browser()
+    # 必要なのは「タイトル・高評価数・低評価数・カテゴリー」で、それらの取得方法は各々のクラスによって違う。
+    def get_contents(self, min_good_count='', min_good_rate='', min_view_count=''):
+        self.set_movie_evaluation_attr(
+            min_good_count, min_good_rate, min_view_count)
 
-        self.driver.get(self.url)
-
-        # サイトのアクセスすることもget_linksの役目の一つな気がする
         links = self.get_links()
 
         contents = []
@@ -43,7 +33,7 @@ class Nukisuto(Av):
             good_rate = self.get_good_rate(good, bad)
 
             # 高評価が10以上かつ高評価率が0.8以上
-            if good >= self.like_count and good_rate >= self.like_rate:
+            if self.validation_content(good, good_rate, ''):
                 contents.append(
                     [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
 

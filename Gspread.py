@@ -37,7 +37,7 @@ class Gspread:
         # シートに新しいデータを書き込む
         ws = self.get_worksheet(now)
         ws.format('A1:E1', {'textFormat': {'bold': True}})
-        ws.update('A1:E1', [['タイトル', 'リンク', '高評価', '高評価率', 'タグ']])
+        ws.update('A1:F1', [['サムネ', 'タイトル', 'リンク', '高評価', '高評価率', 'タグ']])
         for i, content in enumerate(contents):
             for j, val in enumerate(content):
                 ws.update_cell(i+2, j+1, val)

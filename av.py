@@ -36,15 +36,16 @@ class Av:
         return good_rate
 
     def set_min_good_count(self, min_good_count):
-        if min_good_count != '' and type(min_good_count) is int:
+        if isinstance(min_good_count, int):
             self.min_good_count = min_good_count
 
     def set_min_good_rate(self, min_good_rate):
-        if min_good_rate != '' and type(min_good_rate) is float or int:
+        if isinstance(min_good_rate, int) or isinstance(min_good_rate, float):
+            print('hello')
             self.min_good_rate = min_good_rate
 
     def set_min_view_count(self, min_view_count):
-        if min_view_count != '' and type(min_view_count) is int:
+        if isinstance(min_view_count, int):
             self.min_view_count = min_view_count
 
     def set_movie_evaluation_attr(self, min_good_count, min_good_rate, min_view_count):

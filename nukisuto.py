@@ -1,10 +1,16 @@
 from av import Av
+from selenium.webdriver.common.by import By
 
 
 class Nukisuto(Av):
     # AVサイトのトップページから動画の詳細リンクを収集する
     def get_links(self):
+        # linksをオブジェクトにすれば良いかも
+        links = {
+            'page_link': 'url',
+            'im_link': 'url'}
         links = []
+        # 「article」で取得してきた方が良いかも。サムネイルの画像も同時に取得できるから
         for a_tag in self.driver.find_elements_by_css_selector('.article_content h3 a'):
             link = a_tag.get_attribute('href')
             if self.url in link:
@@ -12,8 +18,6 @@ class Nukisuto(Av):
 
         return links
 
-    # Avコンテンツを取得
-    # 必要なのは「タイトル・高評価数・低評価数・カテゴリー」で、それらの取得方法は各々のクラスによって違う。
     def get_contents(self, min_good_count='', min_good_rate='', min_view_count=''):
         self.set_movie_evaluation_attr(
             min_good_count, min_good_rate, min_view_count)
@@ -33,7 +37,7 @@ class Nukisuto(Av):
             good_rate = self.get_good_rate(good, bad)
 
             # 高評価が10以上かつ高評価率が0.8以上
-            if self.validation_content(good, good_rate, ''):
+            if self.validation_content(good_count=good, good_rate=good_rate):
                 contents.append(
                     [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
 

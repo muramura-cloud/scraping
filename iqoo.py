@@ -32,7 +32,7 @@ class Iqoo(Av):
             good_rate = self.get_good_rate(good, bad)
 
             # 高評価が10以上かつ高評価率が0.8以上
-            if self.validation_content(good, good_rate, ''):
+            if self.validation_content(good_count=good, good_rate=good_rate):
                 contents.append(
                     [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
 

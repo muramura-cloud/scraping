@@ -47,8 +47,8 @@ class Pornhub(Av):
             self.driver.get(link)
 
             title = self.driver.find_element_by_css_selector('h1').text
+            # 「Pornhub」の場合は英語のタイトルが多いからグーグル翻訳で日本語にする
             title = self.translated_text(title)
-            # data属性を取得した方が良いかも
             good = int(self.driver.find_element_by_class_name(
                 'votesUp').get_attribute('data-rating'))
             bad = int(self.driver.find_element_by_class_name(
@@ -58,7 +58,7 @@ class Pornhub(Av):
             good_rate = self.get_good_rate(good, bad)
 
             # 高評価が10以上かつ高評価率が0.8以上
-            if self.validation_content(good, good_rate, ''):
+            if self.validation_content(good_count=good, good_rate=good_rate):
                 contents.append(
                     [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
 

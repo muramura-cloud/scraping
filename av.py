@@ -41,7 +41,6 @@ class Av:
 
     def set_min_good_rate(self, min_good_rate):
         if isinstance(min_good_rate, int) or isinstance(min_good_rate, float):
-            print('hello')
             self.min_good_rate = min_good_rate
 
     def set_min_view_count(self, min_view_count):

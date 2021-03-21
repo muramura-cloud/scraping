@@ -12,7 +12,6 @@ def job():
     try:
         print('-------------スクレイピング開始--------------')
         print(datetime.datetime.now())
-        print(datetime.datetime.now())
         nukisuto = Nukisuto('https://www.nukistream.com/')
         nukisuto_contents = nukisuto.get_contents()
         iqoo = Iqoo('https://iqoo.me/')
@@ -33,8 +32,7 @@ def job():
         print('-------------スクレイピング終了--------------')
     except Exception as e:
         print('-------------スクレイピング失敗--------------')
-        import traceback
-        traceback.print.exc()
+        print(str(e))
 
 
 # 毎日夜8時に実行する

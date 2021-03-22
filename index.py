@@ -7,6 +7,23 @@ import datetime
 import time
 import sys
 
+print('-------------スクレイピング開始--------------')
+print(datetime.datetime.now())
+nukisuto = Nukisuto('https://www.nukistream.com/')
+nukisuto_contents = nukisuto.get_contents()
+iqoo = Iqoo('https://iqoo.me/')
+iqoo_contents = iqoo.get_contents()
+
+
+contents = nukisuto_contents+iqoo_contents
+
+jsonf = 'av-sheet-5e65e23ebfc9.json'  # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
+# スプレッドシートでコピーしたリンクのkey
+spread_sheet_key = '1UAKduCQdJp1GEQioTYEde_EPXDfL9DnhvSxvUCX6Ovs'
+gspread = Gspread(jsonf, spread_sheet_key)
+gspread.write(contents)
+
+sys.exit()
 
 def job():
     try:
@@ -22,14 +39,13 @@ def job():
 
         contents = nukisuto_contents+iqoo_contents+pornhub_contents
 
-        # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
-        jsonf = 'av-sheet-5e65e23ebfc9.json'
+        jsonf = 'av-sheet-5e65e23ebfc9.json'  # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
         # スプレッドシートでコピーしたリンクのkey
         spread_sheet_key = '1UAKduCQdJp1GEQioTYEde_EPXDfL9DnhvSxvUCX6Ovs'
-
         gspread = Gspread(jsonf, spread_sheet_key)
         gspread.write(contents)
         print('-------------スクレイピング終了--------------')
+        print(datetime.datetime.now())
     except Exception as e:
         print('-------------スクレイピング失敗--------------')
         print(str(e))

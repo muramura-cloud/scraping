@@ -20,6 +20,7 @@ class Pornhub(Av):
         if url != '':
             self.driver.get(url)
 
+        # 特定のurlが指定が指定された場合、そこのページの要素に'pcVideoListItem'というセレクタが必ず存在するとは言えないつまりエラーが起こる可能性があります。
         items = self.driver.find_elements_by_class_name('pcVideoListItem')
         links = []
         for item in items:
@@ -46,21 +47,25 @@ class Pornhub(Av):
             print(link)
             self.driver.get(link)
 
-            title = self.driver.find_element_by_css_selector('h1').text
-            # 「Pornhub」の場合は英語のタイトルが多いからグーグル翻訳で日本語にする
-            title = self.translated_text(title)
-            good = int(self.driver.find_element_by_class_name(
-                'votesUp').get_attribute('data-rating'))
-            bad = int(self.driver.find_element_by_class_name(
-                'votesDown').get_attribute('data-rating'))
-            tags = [tag.text for tag in self.driver.find_elements_by_class_name(
-                'categoriesWrapper')]
-            good_rate = self.get_good_rate(good, bad)
+            try:
+                title = self.driver.find_element_by_css_selector('h1').text
+                # 「Pornhub」の場合は英語のタイトルが多いからグーグル翻訳で日本語にする
+                title = self.translated_text(title)
+                good = int(self.driver.find_element_by_class_name(
+                    'votesUp').get_attribute('data-rating'))
+                bad = int(self.driver.find_element_by_class_name(
+                    'votesDown').get_attribute('data-rating'))
+                tags = [tag.text for tag in self.driver.find_elements_by_class_name(
+                    'categoriesWrapper')]
+                good_rate = self.get_good_rate(good, bad)
 
-            # 高評価が10以上かつ高評価率が0.8以上
-            if self.validation_content(good_count=good, good_rate=good_rate):
-                contents.append(
-                    [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
+                if self.validation_content(good_count=good, good_rate=good_rate):
+                    contents.append(
+                        [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
+            except Exception as e:
+                print('要素の取得に失敗')
+                print(str(e))
+                continue
 
         self.driver.quit()
 

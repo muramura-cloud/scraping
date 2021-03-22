@@ -7,7 +7,7 @@ translator = Translator()
 
 
 class Pornhub(Av):
-    def translated_text(self, text):
+    def get_translated_text(self, text):
         try:
             translated = translator.translate(text, dest='ja').text
         except Exception as e:
@@ -50,7 +50,7 @@ class Pornhub(Av):
             try:
                 title = self.driver.find_element_by_css_selector('h1').text
                 # 「Pornhub」の場合は英語のタイトルが多いからグーグル翻訳で日本語にする
-                title = self.translated_text(title)
+                title = self.get_translated_text(title)
                 good = int(self.driver.find_element_by_class_name(
                     'votesUp').get_attribute('data-rating'))
                 bad = int(self.driver.find_element_by_class_name(

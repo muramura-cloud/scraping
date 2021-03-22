@@ -7,23 +7,6 @@ import datetime
 import time
 import sys
 
-print('-------------スクレイピング開始--------------')
-print(datetime.datetime.now())
-nukisuto = Nukisuto('https://www.nukistream.com/')
-nukisuto_contents = nukisuto.get_contents()
-iqoo = Iqoo('https://iqoo.me/')
-iqoo_contents = iqoo.get_contents()
-
-
-contents = nukisuto_contents+iqoo_contents
-
-jsonf = 'av-sheet-5e65e23ebfc9.json'  # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
-# スプレッドシートでコピーしたリンクのkey
-spread_sheet_key = '1UAKduCQdJp1GEQioTYEde_EPXDfL9DnhvSxvUCX6Ovs'
-gspread = Gspread(jsonf, spread_sheet_key)
-gspread.write(contents)
-
-sys.exit()
 
 def job():
     try:
@@ -33,11 +16,11 @@ def job():
         nukisuto_contents = nukisuto.get_contents()
         iqoo = Iqoo('https://iqoo.me/')
         iqoo_contents = iqoo.get_contents()
-        pornhub = Pornhub('https://jp.pornhub.com/')
-        pornhub_contents = pornhub.get_contents(
-            min_good_count=200, min_good_rate=0.85)
+        # pornhub = Pornhub('https://jp.pornhub.com/')
+        # pornhub_contents = pornhub.get_contents(
+        #     min_good_count=200, min_good_rate=0.85)
 
-        contents = nukisuto_contents+iqoo_contents+pornhub_contents
+        contents = nukisuto_contents+iqoo_contents
 
         jsonf = 'av-sheet-5e65e23ebfc9.json'  # Googleプラットフォームで作成した秘密鍵が記載されたjsonのパス
         # スプレッドシートでコピーしたリンクのkey

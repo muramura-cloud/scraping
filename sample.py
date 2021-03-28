@@ -1,4 +1,5 @@
 from functions import is_empty
+from functions import to_int
 
 evaluation_items = {
     'good_count': {
@@ -8,7 +9,7 @@ evaluation_items = {
                 'target_value': 'btn_good',
                 'attr': 'text',
     },
-    'bad_coungat': {
+    'bad_count': {
         'name': '低評価数',
                 'target': 'id',
                 'target_value': 'btn_bad',
@@ -28,5 +29,9 @@ obj1 = {}
 ob2 = {'page_link': '630', 'im_link': '77'}
 
 obj1.update(ob2)
+
+num = '30,809'
+
+print(to_int(num))
 
 print(obj1)

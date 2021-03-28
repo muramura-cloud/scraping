@@ -1,6 +1,7 @@
 from selenium import webdriver
 from av_config import av_config
 from functions import is_empty
+from functions import to_int
 import sys
 
 
@@ -52,8 +53,8 @@ class Av:
             return rate
 
         try:
-            if int(count1) > 0 or int(count2) > 0:
-                rate = round(int(count1) / (int(count1) + int(count2)), 2)
+            if to_int(count1) > 0 or to_int(count2) > 0:
+                rate = round(to_int(count1) / (to_int(count1) + to_int(count2)), 2)
 
             return rate
         except Exception as e:
@@ -99,12 +100,12 @@ class Av:
                 print(evaluation_item['name']+'が取得できていない。')
                 return False
 
-            if ('min' in evaluation_item and (int(count) < evaluation_item['min'])):
+            if ('min' in evaluation_item and (to_int(count) < evaluation_item['min'])):
                 print(evaluation_item['name']+'が' +
                       str(evaluation_item['min'])+'未満')
                 return False
 
-            if ('max' in evaluation_item and (int(count) < evaluation_item['max'])):
+            if ('max' in evaluation_item and (to_int(count) < evaluation_item['max'])):
                 print(evaluation_item['name']+'が' +
                       str(evaluation_item['max'])+'以上')
                 return False
@@ -158,6 +159,13 @@ class Av:
                 good_rate = self.get_rate(good_count, bad_count)
                 if (self.validate_rate(evaluation_items[evaluation_item_name], good_rate)):
                     evaluated_contents['good_rate'] = good_rate
+                else:
+                    return {}
+
+            if (evaluation_item_name == 'view_count'):
+                view_count = self.get_item('view_count')
+                if (self.validate_count(evaluation_items[evaluation_item_name], view_count)):
+                    evaluated_contents['view_count'] = view_count
                 else:
                     return {}
 

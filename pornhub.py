@@ -41,7 +41,6 @@ class Pornhub(Av):
             'h1 a').get_attribute('href')
         # 動画のリンクを収集
         links = self.get_links(soaring_movie_link)
-        print(links)
 
         # 質の高い動画を抽出
         contents = super().get_contents(links)

@@ -129,6 +129,14 @@ av_config = {
                 'target_value': 'votesDown',
                 'attr': 'data-rating',
             },
+            'view_count': {
+                'name': '再生数',
+                'required': False,
+                'min': 10000,
+                'target': 'class',
+                'target_value': 'count',
+                'attr': 'text',
+            },
             'good_rate': {
                 'name': '高評価率',
                 'required': True,

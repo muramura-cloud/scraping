@@ -36,7 +36,7 @@ class Iqoo(Av):
             self.driver.get(page_link)
 
             try:
-                im_link = '=IMAGE("' + link['im_link'] + '")'
+                im_link = self.get_im_link(link)
                 title = self.driver.find_element_by_css_selector('h1').text
                 good = int(self.driver.find_element_by_id('btn_good').text)
                 bad = int(self.driver.find_element_by_id('btn_bad').text)

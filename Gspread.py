@@ -25,6 +25,7 @@ class Gspread:
     # 二次元配列を受け取ってデータをスプレッドシートに書き込む
     def write(self, contents):
         if not contents:
+            print('コンテンツがありません。')
             return
 
         # シートがある程度増えてきたらそれを削除する
@@ -38,6 +39,10 @@ class Gspread:
         ws = self.get_worksheet(now)
         ws.format('A1:F1', {'textFormat': {'bold': True}})
         ws.update('A1:F1', [['サムネ', 'タイトル', 'リンク', '高評価', '高評価率', 'タグ']])
-        for i, content in enumerate(contents):
-            for j, val in enumerate(content):
-                ws.update_cell(i+2, j+1, val)
+        try:
+            for i, content in enumerate(contents):
+                for j, val in enumerate(content):
+                    ws.update_cell(i+2, j+1, val)
+        except Exception as e:
+            print('シートの書き込みに失敗しました。')
+            print(str(e))

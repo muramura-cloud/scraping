@@ -11,6 +11,7 @@ class Pornhub(Av):
         try:
             translated = translator.translate(text, dest='ja').text
         except Exception as e:
+            print('翻訳に失敗しました。')
             return text
 
         return translated
@@ -25,48 +26,27 @@ class Pornhub(Av):
         links = []
         for item in items:
             a_tag = item.find_element(By.TAG_NAME, 'a')
-            link = a_tag.get_attribute('href')
-            links.append(link)
+            img_tag = item.find_element(By.TAG_NAME, 'img')
+            links.append({
+                'page_link': a_tag.get_attribute('href'),
+                'im_link': img_tag.get_attribute('src')
+            })
 
         return links
 
     # Avコンテンツを取得
-    def get_contents(self, min_good_count='', min_good_rate='', min_view_count=''):
-        # 取得する動画の評価基準を調整
-        self.set_movie_evaluation_attr(
-            min_good_count, min_good_rate, min_view_count)
-
+    def get_contents(self):
         # 急上昇のページのリンクを取得
         soaring_movie_link = self.driver.find_element_by_css_selector(
             'h1 a').get_attribute('href')
-
+        # 動画のリンクを収集
         links = self.get_links(soaring_movie_link)
+        print(links)
 
-        contents = []
-        for link in links:
-            print(link)
-            self.driver.get(link)
+        # 質の高い動画を抽出
+        contents = super().get_contents(links)
 
-            try:
-                title = self.driver.find_element_by_css_selector('h1').text
-                # 「Pornhub」の場合は英語のタイトルが多いからグーグル翻訳で日本語にする
-                title = self.get_translated_text(title)
-                good = int(self.driver.find_element_by_class_name(
-                    'votesUp').get_attribute('data-rating'))
-                bad = int(self.driver.find_element_by_class_name(
-                    'votesDown').get_attribute('data-rating'))
-                tags = [tag.text for tag in self.driver.find_elements_by_class_name(
-                    'categoriesWrapper')]
-                good_rate = self.get_good_rate(good, bad)
-
-                if self.validation_content(good_count=good, good_rate=good_rate):
-                    contents.append(
-                        [title, link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
-            except Exception as e:
-                print('要素の取得に失敗')
-                print(str(e))
-                continue
-
+        # ブラウザを閉じる
         self.driver.quit()
 
         return contents

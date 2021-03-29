@@ -129,30 +129,33 @@ class Av:
             print(sys._getframe().f_code.co_name)
             print(str(e))
 
-    def get_evaluation_items(self):
+    def get_evaluation_items(self, base_element=None):
         evaluation_items = {}
 
         evaluation_items_config = self.theme['items']['evaluation_items']
         for evaluation_item_name in evaluation_items_config:
             if (evaluation_item_name == 'good_count'):
-                evaluation_items['good_count'] = self.get_item('good_count')
+                evaluation_items['good_count'] = self.get_item(
+                    'good_count', base_element)
 
             if (evaluation_item_name == 'bad_count'):
-                evaluation_items['bad_count'] = self.get_item('bad_count')
+                evaluation_items['bad_count'] = self.get_item(
+                    'bad_count', base_element)
 
             if (evaluation_item_name == 'view_count'):
-                evaluation_items['view_count'] = self.get_item('view_count')
+                evaluation_items['view_count'] = self.get_item(
+                    'view_count', base_element)
 
             if (evaluation_item_name == 'good_rate'):
                 if ('good_count' not in evaluation_items_config or 'bad_count' not in evaluation_items_config):
                     print('高評価数と低評価数を取得する際の設定情報がありません。評価率を取得するにはそれら二つが必要です。')
 
-                good_count = self.get_item('good_count')
-                bad_count = self.get_item('bad_count')
+                good_count = self.get_item('good_count', base_element)
+                bad_count = self.get_item('bad_count', base_element)
                 evaluation_items['good_rate'] = self.get_rate(
                     good_count, bad_count)
 
-        return evaluation_items    
+        return evaluation_items
 
     def format_im_link(self, link):
         return '=IMAGE("' + link + '")'
@@ -190,28 +193,38 @@ class Av:
 
         return links
 
-    def get_element(self, target, value):
+    def get_element(self, target, value, base_element=None):
         element = {}
+
+        driver = self.driver
+        if (not is_empty(base_element)):
+            driver = base_element
+
         try:
             if target == 'id':
-                element = self.driver.find_element_by_id(value)
+                element = driver.find_element_by_id(value)
             elif target == 'class':
-                element = self.driver.find_element_by_class_name(value)
+                element = driver.find_element_by_class_name(value)
             elif target == 'tag':
-                element = self.driver.find_element_by_css_selector(value)
+                element = driver.find_element_by_css_selector(value)
         except Exception as e:
             print('ターゲットとなる要素の取得に失敗')
             print(str(e))
 
         return element
 
-    def get_elements(self, target, value):
+    def get_elements(self, target, value, base_element=None):
         elements = []
+
+        driver = self.driver
+        if (not is_empty(base_element)):
+            driver = base_element
+
         try:
             if target == 'class':
-                elements = self.driver.find_elements_by_css_selector(value)
+                elements = driver.find_elements_by_css_selector(value)
             elif target == 'tag':
-                elements = self.driver.find_elements_by_css_selector(value)
+                elements = driver.find_elements_by_css_selector(value)
         except Exception as e:
             print('ターゲットとなる要素の取得に失敗')
             print(str(e))
@@ -223,8 +236,8 @@ class Av:
         try:
             if attr == 'text':
                 value = element.text
-            elif attr == 'data-rating':
-                value = element.get_attribute('data-rating')
+            else:
+                value = element.get_attribute(attr)
         except Exception as e:
             print('要素の値の取得に失敗')
             print(sys._getframe().f_code.co_name)
@@ -247,7 +260,7 @@ class Av:
 
         return values
 
-    def get_item(self, item_name):
+    def get_item(self, item_name, base_element=None):
         item = ''
 
         info = self.get_info_for_getting_item(item_name)
@@ -257,7 +270,8 @@ class Av:
             return item
 
         try:
-            element = self.get_element(info['target'], info['value'])
+            element = self.get_element(
+                info['target'], info['value'], base_element)
             item = self.get_element_value(element, info['attr'])
         except Exception as e:
             print('アイテムの取得に失敗')
@@ -265,7 +279,7 @@ class Av:
 
         return item
 
-    def get_items(self, item_name):
+    def get_items(self, item_name, base_element=None):
         items = []
 
         info = self.get_info_for_getting_item(item_name)
@@ -275,7 +289,8 @@ class Av:
             return items
 
         try:
-            elements = self.get_elements(info['target'], info['value'])
+            elements = self.get_elements(
+                info['target'], info['value'], base_element)
             items = self.get_element_values(elements, info['attr'])
         except Exception as e:
             print('アイテム群の取得に失敗')
@@ -283,7 +298,7 @@ class Av:
 
         return items
 
-    def get_need_items(self):
+    def get_need_items(self, base_element=None):
         items = {}
 
         if ('need_items' not in self.theme['items']):
@@ -293,9 +308,9 @@ class Av:
         need_items = self.theme['items']['need_items']
         for need_item_name in need_items:
             if (need_item_name == 'title'):
-                items['title'] = self.get_item('title')
+                items['title'] = self.get_item('title', base_element)
             if (need_item_name == 'tags'):
-                items['tags'] = '・'.join(self.get_items('tags'))
+                items['tags'] = '・'.join(self.get_items('tags', base_element))
 
         return items
 

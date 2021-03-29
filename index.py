@@ -8,10 +8,10 @@ import datetime
 import time
 import sys
 
-nukisuto = Nukisuto('nukisuto')
-contents = nukisuto.get_contents()
-# javym = Javym('javym')
-# contents = javym.get_contents()
+# nukisuto = Nukisuto('nukisuto')
+# contents = nukisuto.get_contents()
+javym = Javym('javym')
+contents = javym.get_contents()
 
 print(contents)
 

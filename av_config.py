@@ -1,4 +1,3 @@
-# ある特定の関数を叩けば、簡単にこのファイルを生成あるいは変更できる仕組みがあるとさらに便利だな。
 av_config = {
     'nukisuto': {
         'theme_name': '抜きスト',
@@ -145,9 +144,9 @@ av_config = {
                     'name': '高評価数',
                     'required': True,
                     'min': 30,
-                    'target': 'class',
-                    'value': 'votesUp',
-                    'attr': 'data-rating',
+                    'target': 'tag',
+                    'value': 'article figure strong',
+                    'attr': 'text',
                 },
             },
             'need_items': {
@@ -155,7 +154,7 @@ av_config = {
                     'name': 'タイトル',
                     'required': True,
                     'target': 'tag',
-                    'value': 'h1',
+                    'value': 'h2',
                     'attr': 'text',
                 },
                 'tags': {

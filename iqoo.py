@@ -22,37 +22,14 @@ class Iqoo(Av):
         return links
 
     # コンテンツを取得
-    def get_contents(self, min_good_count='', min_good_rate='', min_view_count=''):
-        # 動画ののクオリティの基準を再設定する。
-        self.set_movie_evaluation_attr(
-            min_good_count, min_good_rate, min_view_count)
-
+    def get_contents(self):
+        # 動画のリンクを取得
         links = self.get_links()
 
-        contents = []
-        for link in links:
-            page_link = link['page_link']
-            print(page_link)
-            self.driver.get(page_link)
+        # 質の高い動画を抽出
+        contents = super().get_contents(links)
 
-            try:
-                im_link = self.get_im_link(link)
-                title = self.driver.find_element_by_css_selector('h1').text
-                good = int(self.driver.find_element_by_id('btn_good').text)
-                bad = int(self.driver.find_element_by_id('btn_bad').text)
-                tags = [tag.text for tag in self.driver.find_elements_by_css_selector(
-                    'article footer li a')]
-                good_rate = self.get_good_rate(good, bad)
-
-                # 高評価が10以上かつ高評価率が0.8以上
-                if self.validation_content(good_count=good, good_rate=good_rate):
-                    contents.append(
-                        [im_link, title, page_link, good, '{:.0%}'.format(good_rate), '・'.join(tags)])
-            except Exception as e:
-                print('要素の取得に失敗')
-                print(str(e))
-                continue
-
+        # ブラウザを閉じる
         self.driver.quit()
 
         return contents

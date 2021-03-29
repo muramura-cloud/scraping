@@ -1,6 +1,7 @@
 from selenium import webdriver
 from av_config import av_config
 from functions import is_empty
+from functions import is_empty_obj
 from functions import to_int
 import sys
 
@@ -54,7 +55,8 @@ class Av:
 
         try:
             if to_int(count1) > 0 or to_int(count2) > 0:
-                rate = round(to_int(count1) / (to_int(count1) + to_int(count2)), 2)
+                rate = round(to_int(count1) /
+                             (to_int(count1) + to_int(count2)), 2)
 
             return rate
         except Exception as e:
@@ -62,21 +64,18 @@ class Av:
             print(str(e))
 
     def get_info_for_getting_item(self, item_name):
-        info = {}
+        target = None
+        value = None
+        attr = None
 
         try:
-            if (item_name in self.theme['need_items']):
-                target = self.theme['need_items'][item_name]['target']
-                value = self.theme['need_items'][item_name]['value']
-                attr = self.theme['need_items'][item_name]['attr']
-            elif (item_name in self.theme['evaluation_items']):
-                target = self.theme['evaluation_items'][item_name]['target']
-                value = self.theme['evaluation_items'][item_name]['target_value']
-                attr = self.theme['evaluation_items'][item_name]['attr']
-            else:
-                return info
+            for items_name in self.theme['items']:
+                if (item_name in self.theme['items'][items_name]):
+                    target = self.theme['items'][items_name][item_name]['target']
+                    value = self.theme['items'][items_name][item_name]['value']
+                    attr = self.theme['items'][items_name][item_name]['attr']
         except Exception as e:
-            print('要素及びその値の抽出に必要なデータの取得に失敗。おそらく、指定されたアイテムが設定ファイルに存在しません。')
+            print('要素及びその値の抽出に必要なデータが取得されていません。おそらく、指定されたアイテムが設定ファイルに存在しません。')
             print(sys._getframe().f_code.co_name)
             print(e)
 
@@ -89,7 +88,7 @@ class Av:
 
     def extract_contents_for_writing(self, contents):
         for evaluated_item_name in list(contents):
-            if (self.theme['evaluation_items'][evaluated_item_name]['required'] == False):
+            if (self.theme['items']['evaluation_items'][evaluated_item_name]['required'] == False):
                 del contents[evaluated_item_name]
 
         return contents
@@ -131,7 +130,7 @@ class Av:
             print(str(e))
 
     def evaluate_contents(self):
-        evaluation_items = self.theme['evaluation_items']
+        evaluation_items = self.theme['items']['evaluation_items']
 
         evaluated_contents = {}
         for evaluation_item_name in evaluation_items:
@@ -184,6 +183,33 @@ class Av:
 
         return ''
 
+    def get_links(self):
+        links = []
+
+        if ('links' not in self.theme['items']):
+            print('リンクを取得する際に必要な情報を設定してください。')
+            return links
+
+        links_conf = self.theme['items']['links']
+        for link_name in links_conf:
+            if (link_name == 'page_link'):
+                page_links = self.get_items('page_link')
+            if (link_name == 'im_link'):
+                im_links = self.get_items('im_link')
+
+        # 動画リンクとサムネイル画像のリンクをセットにしたオブジェクトの形にする
+        try:
+            for (index, num) in enumerate(page_links):
+                links.append({
+                    'page_link': page_links[index],
+                    'im_link': im_links[index],
+                })
+        except Exception as e:
+            print('動画リンクとサムネイル画像のリンクが正しく取得できていません。')
+            print(str(e))
+
+        return links
+
     def get_element(self, target, value):
         element = {}
         try:
@@ -206,6 +232,8 @@ class Av:
                 elements = self.driver.find_elements_by_css_selector(value)
             elif target == 'tag':
                 elements = self.driver.find_elements_by_css_selector(value)
+                print(value)
+                print(elements)
         except Exception as e:
             print('ターゲットとなる要素の取得に失敗')
             print(str(e))
@@ -231,9 +259,9 @@ class Av:
         try:
             if attr == 'text':
                 values = [element.text for element in elements]
-            elif attr == 'data-rating':
+            else:
                 values = [element.get_attribute(
-                    'data-rating') for element in elements]
+                    attr) for element in elements]
         except Exception as e:
             print('要素群の値の取得に失敗')
             print(sys._getframe().f_code.co_name)
@@ -246,8 +274,8 @@ class Av:
 
         info = self.get_info_for_getting_item(item_name)
 
-        if (info == {}):
-            print('要素及びその値の抽出に必要なデータの取得に失敗。指定されたアイテムが設定ファイルに存在しません。')
+        if (is_empty_obj(info)):
+            print('要素及びその値の抽出に必要なデータが取得されていません。指定されたアイテムが設定ファイルに存在しません。')
             return item
 
         try:
@@ -264,27 +292,28 @@ class Av:
 
         info = self.get_info_for_getting_item(item_name)
 
-        if (info == {}):
-            print('要素及びその値の抽出に必要なデータの取得に失敗。おそらく、指定されたアイテムが設定ファイルに存在しません。')
+        if (is_empty_obj(info)):
+            print('要素及びその値の抽出に必要なデータの取得されていません。おそらく、指定されたアイテムが設定ファイルに存在しません。')
             return items
 
         try:
-            element = self.get_elements(info['target'], info['value'])
-            items = self.get_element_values(element, info['attr'])
+            elements = self.get_elements(info['target'], info['value'])
+            items = self.get_element_values(elements, info['attr'])
         except Exception as e:
             print('アイテム群の取得に失敗')
             print(str(e))
 
         return items
 
+    # 取得したいデータ項目(evaluation_itemsとか、linksとか)だけを引数に入れれば取得できるようになるとなお便利
     def get_need_items(self):
         items = {}
 
-        if ('need_items' not in self.theme):
+        if ('need_items' not in self.theme['items']):
             print('シートに記載する必要な項目を設定してください。')
             return items
 
-        need_items = self.theme['need_items']
+        need_items = self.theme['items']['need_items']
         for need_item_name in need_items:
             if (need_item_name == 'title'):
                 items['title'] = self.get_item('title')

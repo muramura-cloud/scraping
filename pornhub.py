@@ -16,7 +16,6 @@ class Pornhub(Av):
 
         return translated
 
-    # 特定のurlが指定されていたら、そこのページのリンクを収集する
     def get_links(self, url=''):
         if url != '':
             self.driver.get(url)
@@ -34,7 +33,6 @@ class Pornhub(Av):
 
         return links
 
-    # Avコンテンツを取得
     def get_contents(self):
         # 急上昇のページのリンクを取得
         soaring_movie_link = self.driver.find_element_by_css_selector(
@@ -44,6 +42,12 @@ class Pornhub(Av):
 
         # 質の高い動画を抽出
         contents = super().get_contents(links)
+
+        # 「need_items」にtitle当項目がセットされていたら、それを日本語に翻訳する。
+        if ('title' in self.theme['items']['need_items']):
+            for index, content in enumerate(contents):
+                contents[index]['title'] = self.get_translated_text(
+                    content['title'])
 
         # ブラウザを閉じる
         self.driver.quit()

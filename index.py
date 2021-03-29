@@ -7,6 +7,8 @@ import datetime
 import time
 import sys
 
+# nukisuto = Nukisuto('nukisuto')
+# contents = nukisuto.get_contents()
 pornhub = Pornhub('pornhub')
 contents = pornhub.get_contents()
 print(contents)

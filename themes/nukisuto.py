@@ -5,18 +5,22 @@ import sys
 
 
 class Nukisuto(Av):
+    # 抽出したリンクでベースページと関係ないものは削除
+    def extract_links(self, links):
+        del_indexes = []
+        for index, link in enumerate(links):
+            if (self.theme['base_url'] not in link['page_link']):
+                del_indexes.append(index)
+        del links[del_indexes[0]:del_indexes[-1]+1]
+
+        return links
+
     def get_links(self, url=''):
         if url != '':
             self.driver.get(url)
 
         links = super().get_links()
-
-        # 抽出したリンクでベースページと関係ないものは削除
-        del_list_indexes = []
-        for index, link in enumerate(links):
-            if (self.theme['base_url'] not in link['page_link']):
-                del_list_indexes.append(index)
-        del links[del_list_indexes[0]:del_list_indexes[-1]]
+        links = self.extract_links(links)
 
         return links
 

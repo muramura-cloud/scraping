@@ -129,6 +129,7 @@ class Av:
             print(sys._getframe().f_code.co_name)
             print(str(e))
 
+    # 評価項目を取得して、バリデーションする
     def evaluate_contents(self):
         evaluation_items = self.theme['items']['evaluation_items']
 
@@ -157,7 +158,7 @@ class Av:
                 bad_count = self.get_item('bad_count')
                 good_rate = self.get_rate(good_count, bad_count)
                 if (self.validate_rate(evaluation_items[evaluation_item_name], good_rate)):
-                    evaluated_contents['good_rate'] = good_rate
+                    evaluated_contents['good_rate'] = '{:.0%}'.format(good_rate)
                 else:
                     return {}
 
@@ -171,11 +172,8 @@ class Av:
         print('基準クリア')
         return evaluated_contents
 
-    def get_im_link(self, link):
-        if 'im_link' in link and link['im_link'] in link.values():
-            return '=IMAGE("' + link['im_link'] + '")'
-
-        return 'サムネイル画像はありません。'
+    def format_im_link(self, link):
+        return '=IMAGE("' + link + '")'
 
     def get_page_link(self, link):
         if 'page_link' in link and link['page_link'] in link.values():
@@ -202,7 +200,7 @@ class Av:
             for (index, num) in enumerate(page_links):
                 links.append({
                     'page_link': page_links[index],
-                    'im_link': im_links[index],
+                    'im_link': self.format_im_link(im_links[index]),
                 })
         except Exception as e:
             print('動画リンクとサムネイル画像のリンクが正しく取得できていません。')
@@ -232,8 +230,6 @@ class Av:
                 elements = self.driver.find_elements_by_css_selector(value)
             elif target == 'tag':
                 elements = self.driver.find_elements_by_css_selector(value)
-                print(value)
-                print(elements)
         except Exception as e:
             print('ターゲットとなる要素の取得に失敗')
             print(str(e))
@@ -305,7 +301,7 @@ class Av:
 
         return items
 
-    # 取得したいデータ項目(evaluation_itemsとか、linksとか)だけを引数に入れれば取得できるようになるとなお便利
+    # これは項目をまとめて取得する関数か
     def get_need_items(self):
         items = {}
 
@@ -327,15 +323,16 @@ class Av:
         # 必ず必要なページリンクとサムネイル画像のリンク
         append_content.update(link)
 
-        # タイトルやタグなどの必要項目
-        append_content.update(need_items)
-
         # 動画の質を判断する際の評価項目
         evaluated_contents = self.extract_contents_for_writing(
             evaluated_contents)
         append_content.update(evaluated_contents)
 
+        # タイトルやタグなどの必要項目
+        append_content.update(need_items)
+
         contents.append(append_content)
+
         return contents
 
     def get_contents(self, links):

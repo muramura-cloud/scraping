@@ -1,4 +1,3 @@
-# この設定をもとにget_contents()を叩けば良い。
 # ある特定の関数を叩けば、簡単にこのファイルを生成あるいは変更できる仕組みがあるとさらに便利だな。
 av_config = {
     'nukisuto': {
@@ -7,13 +6,15 @@ av_config = {
         'items': {
             'links': {
                 'page_link': {
-                    'name': '遷移先リンク',
+                    'name': 'リンク',
+                    'required': True,
                     'target': 'tag',
                     'value': '.article_content h3 a',
                     'attr': 'href',
                 },
                 'im_link': {
-                    'name': 'サムネイル画像リンク',
+                    'name': 'サムネイル',
+                    'required': True,
                     'target': 'tag',
                     'value': 'article img',
                     'attr': 'src',
@@ -44,12 +45,14 @@ av_config = {
             'need_items': {
                 'title': {
                     'name': 'タイトル',
+                    'required': True,
                     'target': 'tag',
                     'value': 'h1',
                     'attr': 'text',
                 },
                 'tags': {
                     'name': 'タグ',
+                    'required': True,
                     'target': 'tag',
                     'value': 'article footer li a',
                     'attr': 'text',
@@ -64,14 +67,16 @@ av_config = {
             'links': {
                 'page_link': {
                     'name': '遷移先リンク',
+                    'required': True,
                     'target': 'tag',
                     'value': '.article_content h3 a',
                     'attr': 'href',
                 },
                 'im_link': {
                     'name': 'サムネイル画像リンク',
+                    'required': True,
                     'target': 'tag',
-                    'value': '.article_content h3 a',
+                    'value': 'article img',
                     'attr': 'src',
                 },
             },
@@ -100,12 +105,14 @@ av_config = {
             'need_items': {
                 'title': {
                     'name': 'タイトル',
+                    'required': True,
                     'target': 'tag',
                     'value': 'h1',
                     'attr': 'text',
                 },
                 'tags': {
                     'name': 'タグ',
+                    'required': True,
                     'target': 'tag',
                     'value': 'article footer li a',
                     'attr': 'text',
@@ -120,12 +127,14 @@ av_config = {
             'links': {
                 'page_link': {
                     'name': '遷移先リンク',
+                    'required': True,
                     'target': 'tag',
                     'value': '.article_content h3 a',
                     'attr': 'href',
                 },
                 'im_link': {
                     'name': 'サムネイル画像リンク',
+                    'required': True,
                     'target': 'tag',
                     'value': '.article_content h3 a',
                     'attr': 'src',
@@ -165,12 +174,14 @@ av_config = {
             'need_items': {
                 'title': {
                     'name': 'タイトル',
+                    'required': True,
                     'target': 'tag',
                     'value': 'h1',
                     'attr': 'text',
                 },
                 'tags': {
                     'name': 'タグ',
+                    'required': True,
                     'target': 'class',
                     'value': '.categoriesWrapper .item',
                     'attr': 'text',

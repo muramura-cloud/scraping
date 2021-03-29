@@ -120,6 +120,54 @@ av_config = {
             },
         }
     },
+    'javym': {
+        'theme_name': 'ジャビま',
+        'base_url': 'https://javym.net/',
+        'items': {
+            'links': {
+                'page_link': {
+                    'name': 'リンク',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'article h2 a',
+                    'attr': 'href',
+                },
+                'im_link': {
+                    'name': 'サムネイル',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'article img',
+                    'attr': 'src',
+                },
+            },
+            'evaluation_items': {
+                'good_count': {
+                    'name': '高評価数',
+                    'required': True,
+                    'min': 30,
+                    'target': 'class',
+                    'value': 'votesUp',
+                    'attr': 'data-rating',
+                },
+            },
+            'need_items': {
+                'title': {
+                    'name': 'タイトル',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'h1',
+                    'attr': 'text',
+                },
+                'tags': {
+                    'name': 'タグ',
+                    'required': True,
+                    'target': 'class',
+                    'value': '.tagList',
+                    'attr': 'text',
+                },
+            },
+        },
+    },
     'pornhub': {
         'theme_name': 'Pornhub',
         'base_url': 'https://jp.pornhub.com/',

@@ -129,48 +129,30 @@ class Av:
             print(sys._getframe().f_code.co_name)
             print(str(e))
 
-    # 評価項目を取得して、バリデーションする
-    def evaluate_contents(self):
-        evaluation_items = self.theme['items']['evaluation_items']
+    def get_evaluation_items(self):
+        evaluation_items = {}
 
-        evaluated_contents = {}
-        for evaluation_item_name in evaluation_items:
+        evaluation_items_config = self.theme['items']['evaluation_items']
+        for evaluation_item_name in evaluation_items_config:
             if (evaluation_item_name == 'good_count'):
-                good_count = self.get_item('good_count')
-                if (self.validate_count(evaluation_items[evaluation_item_name], good_count)):
-                    evaluated_contents['good_count'] = good_count
-                else:
-                    return {}
+                evaluation_items['good_count'] = self.get_item('good_count')
 
             if (evaluation_item_name == 'bad_count'):
-                bad_count = self.get_item('bad_count')
-                if (self.validate_count(evaluation_items[evaluation_item_name], bad_count)):
-                    evaluated_contents['bad_count'] = bad_count
-                else:
-                    return {}
+                evaluation_items['bad_count'] = self.get_item('bad_count')
+
+            if (evaluation_item_name == 'view_count'):
+                evaluation_items['view_count'] = self.get_item('view_count')
 
             if (evaluation_item_name == 'good_rate'):
-                if ('good_count' not in evaluation_items or 'bad_count' not in evaluation_items):
+                if ('good_count' not in evaluation_items_config or 'bad_count' not in evaluation_items_config):
                     print('高評価数と低評価数を取得する際の設定情報がありません。評価率を取得するにはそれら二つが必要です。')
-                    return {}
 
                 good_count = self.get_item('good_count')
                 bad_count = self.get_item('bad_count')
-                good_rate = self.get_rate(good_count, bad_count)
-                if (self.validate_rate(evaluation_items[evaluation_item_name], good_rate)):
-                    evaluated_contents['good_rate'] = '{:.0%}'.format(good_rate)
-                else:
-                    return {}
+                evaluation_items['good_rate'] = self.get_rate(
+                    good_count, bad_count)
 
-            if (evaluation_item_name == 'view_count'):
-                view_count = self.get_item('view_count')
-                if (self.validate_count(evaluation_items[evaluation_item_name], view_count)):
-                    evaluated_contents['view_count'] = view_count
-                else:
-                    return {}
-
-        print('基準クリア')
-        return evaluated_contents
+        return evaluation_items    
 
     def format_im_link(self, link):
         return '=IMAGE("' + link + '")'
@@ -301,7 +283,6 @@ class Av:
 
         return items
 
-    # これは項目をまとめて取得する関数か
     def get_need_items(self):
         items = {}
 
@@ -317,6 +298,20 @@ class Av:
                 items['tags'] = '・'.join(self.get_items('tags'))
 
         return items
+
+    def evaluate(self, evaluation_items):
+        evaluation_config = self.theme['items']['evaluation_items']
+
+        for evaluation_item_name in evaluation_items:
+            if ('count' in evaluation_item_name):
+                if (self.validate_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                    return False
+            elif ('rate' in evaluation_item_name):
+                if (self.validate_rate(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                    return False
+
+        print('基準クリア')
+        return True
 
     def append_contents(self, contents, link, need_items, evaluated_contents):
         append_content = {}
@@ -346,15 +341,18 @@ class Av:
             print(page_link)
             self.driver.get(page_link)
             try:
-                evaluated_contents = self.evaluate_contents()
-                if (not is_empty(evaluated_contents)):
-                    need_items = self.get_need_items()
-                    if (is_empty(need_items)):
-                        print('シートに記載する必要項目が取得出来ていません。')
-                        continue
+                evaluation_items = self.get_evaluation_items()
+                if (not self.evaluate(evaluation_items)):
+                    print('基準を満たしていない。')
+                    continue
 
-                    contents = self.append_contents(
-                        contents, link, need_items, evaluated_contents)
+                need_items = self.get_need_items()
+                if (is_empty(need_items)):
+                    print('必要項目が取得出来ていません。')
+                    continue
+
+                contents = self.append_contents(
+                    contents, link, need_items, evaluation_items)
             except Exception as e:
                 print('シート入力コンテンツの取得に失敗')
                 print(str(e))

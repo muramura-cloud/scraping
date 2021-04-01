@@ -1,20 +1,18 @@
 from gspreads.av_gspread import AV_Gspread
+# いちいち全部インポートするのめんどくさいな
 from themes.nukisuto import Nukisuto
 from themes.iqoo import Iqoo
 from themes.pornhub import Pornhub
 from themes.javym import Javym
+from themes.sugirl import Sugirl
 import schedule
 import datetime
 import time
 import sys
 
-# nukisuto = Nukisuto('nukisuto')
-# contents = nukisuto.get_contents()
-javym = Javym('javym')
-contents = javym.get_contents()
-
+sugirl = Sugirl('sugirl')
+contents = sugirl.get_contents()
 print(contents)
-
 sys.exit()
 
 
@@ -23,9 +21,7 @@ def job():
         print('-------------スクレイピング開始--------------')
         print(datetime.datetime.now())
         nukisuto = Nukisuto('nukisuto')
-        iqoo = Iqoo('https://iqoo.me/')
-
-        # 基盤クラスにget_write_contens()を作って、theme名を入れたら下のオブジェクト返してくれるメソッドを作れば良いかな。
+        iqoo = Iqoo('iqoo')
 
         write_contents = [
             {

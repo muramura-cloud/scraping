@@ -5,7 +5,6 @@ import sys
 
 
 class Nukisuto(Av):
-    # 抽出したリンクでベースページと関係ないものは削除
     def extract_links(self, links):
         del_indexes = []
         for index, link in enumerate(links):

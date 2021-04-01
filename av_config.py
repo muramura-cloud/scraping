@@ -119,6 +119,62 @@ av_config = {
             },
         }
     },
+    'sugirl': {
+        'theme_name': 'シュガール',
+        'base_url': 'https://sugirl.info/',
+        'items': {
+            'links': {
+                'page_link': {
+                    'name': 'リンク',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'article a',
+                    'attr': 'href',
+                },
+                'im_link': {
+                    'name': 'サムネイル',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'article figure img',
+                    'attr': 'src',
+                },
+            },
+            'evaluation_items': {
+                'view_count': {
+                    'name': '再生数',
+                    'required': False,
+                    'min': 10000,
+                    'target': 'class',
+                    'value': 'views',
+                    'attr': 'text',
+                },
+                'elapsed_days_count': {
+                    'name': '経過日数',
+                    'required': False,
+                    'max': 3,
+                    'target': 'tag',
+                    'value': 'article header time',
+                    'attr': 'text',
+                },
+            },
+            'need_items': {
+                'title': {
+                    'name': 'タイトル',
+                    'required': True,
+                    'target': 'tag',
+                    'value': 'h1',
+                    'attr': 'text',
+                },
+                'tags': {
+                    'name': 'タグ',
+                    'required': True,
+                    'target': 'tag',
+                    'value': '.tagList li a',
+                    'attr': 'text',
+                },
+            },
+        }
+    },
     'javym': {
         'theme_name': 'ジャビま',
         'base_url': 'https://javym.net/',
@@ -173,18 +229,18 @@ av_config = {
         'items': {
             'links': {
                 'page_link': {
-                    'name': '遷移先リンク',
+                    'name': 'リンク',
                     'required': True,
                     'target': 'tag',
-                    'value': '.article_content h3 a',
+                    'value': '.pcVideoListItem a',
                     'attr': 'href',
                 },
                 'im_link': {
-                    'name': 'サムネイル画像リンク',
+                    'name': 'サムネイル',
                     'required': True,
                     'target': 'tag',
-                    'value': '.article_content h3 a',
-                    'attr': 'src',
+                    'value': '.pcVideoListItem .phimage a img',
+                    'attr': 'data-thumb_url',
                 },
             },
             'evaluation_items': {
@@ -192,24 +248,24 @@ av_config = {
                     'name': '高評価数',
                     'required': True,
                     'min': 100,
-                    'target': 'class',
-                    'value': 'votesUp',
+                    'target': 'tag',
+                    'value': '.votesUp',
                     'attr': 'data-rating',
                 },
                 'bad_count': {
                     'name': '低評価数',
                     'required': False,
                     'max': 30,
-                    'target': 'class',
-                    'value': 'votesDown',
+                    'target': 'tag',
+                    'value': '.votesDown',
                     'attr': 'data-rating',
                 },
                 'view_count': {
                     'name': '再生数',
                     'required': False,
                     'min': 10000,
-                    'target': 'class',
-                    'value': 'count',
+                    'target': 'tag',
+                    'value': '.count',
                     'attr': 'text',
                 },
                 'good_rate': {

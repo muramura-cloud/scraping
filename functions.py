@@ -1,3 +1,7 @@
+import re
+from datetime import datetime
+
+
 def is_empty(value):
     return value == '' or value == [] or value == {} or value == None
 
@@ -14,4 +18,18 @@ def is_empty_obj(obj):
 
 
 def to_int(value):
-    return int(value.replace(',', ''))
+    return int(re.sub("\\D", "", value))
+
+
+def get_elapsed_day_count(date):
+    try:
+        date_list = date.split('.')
+        posted_date = datetime(int(date_list[0]), int(
+            date_list[1]), int(date_list[2]))
+        now = datetime.now()
+        elapsed_day_count = (now-posted_date).days
+
+        return elapsed_day_count
+    except Exception as e:
+        print(str(e))
+        return None

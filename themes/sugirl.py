@@ -1,13 +1,14 @@
 from av import Av
+import sys
 
 
-class Iqoo(Av):
+class Sugirl(Av):
     def get_links(self, url=''):
         if url != '':
             self.driver.get(url)
 
         links = super().get_links()
-        links = self.extract_links(links, self.theme['base_url'])
+        links = self.extract_links(links, 'video')
 
         return links
 

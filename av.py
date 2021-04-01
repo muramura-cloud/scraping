@@ -3,7 +3,11 @@ from av_config import av_config
 from functions import is_empty
 from functions import is_empty_obj
 from functions import to_int
+from functions import get_elapsed_day_count
 import sys
+
+# 引数に所々セットされている「base_element」は探索の起点となる。
+# セットしない場合は、ベースページがからの要素の探索となる。
 
 
 class Av:
@@ -104,7 +108,7 @@ class Av:
                       str(evaluation_item['min'])+'未満')
                 return False
 
-            if ('max' in evaluation_item and (to_int(count) < evaluation_item['max'])):
+            if ('max' in evaluation_item and (to_int(count) > evaluation_item['max'])):
                 print(evaluation_item['name']+'が' +
                       str(evaluation_item['max'])+'以上')
                 return False
@@ -112,6 +116,31 @@ class Av:
             return True
         except Exception as e:
             print('カウントのバリデーションに失敗')
+            print(sys._getframe().f_code.co_name)
+            print(e.args)
+
+    # これはdate(0000.?.??)がどういう形式で取得されるのかによるな。
+    def validate_elapsed_days_count(self, evaluation_item, date):
+        try:
+            elapsed_day_count = get_elapsed_day_count(date)
+
+            if (is_empty(elapsed_day_count)):
+                print(evaluation_item['name']+'が取得できていない。')
+                return False
+
+            if ('min' in evaluation_item and (elapsed_day_count < evaluation_item['min'])):
+                print(evaluation_item['name']+'が' +
+                      str(evaluation_item['min'])+'日未満')
+                return False
+
+            if ('max' in evaluation_item and (elapsed_day_count > evaluation_item['max'])):
+                print(evaluation_item['name']+'が' +
+                      str(evaluation_item['max'])+'日以上')
+                return False
+
+            return True
+        except Exception as e:
+            print('経過日数のバリデーションに失敗')
             print(sys._getframe().f_code.co_name)
             print(e.args)
 
@@ -134,6 +163,7 @@ class Av:
 
         evaluation_items_config = self.theme['items']['evaluation_items']
         for evaluation_item_name in evaluation_items_config:
+            # これ全部同じことやってない？
             if (evaluation_item_name == 'good_count'):
                 evaluation_items['good_count'] = self.get_item(
                     'good_count', base_element)
@@ -145,6 +175,10 @@ class Av:
             if (evaluation_item_name == 'view_count'):
                 evaluation_items['view_count'] = self.get_item(
                     'view_count', base_element)
+
+            if (evaluation_item_name == 'elapsed_days_count'):
+                evaluation_items['elapsed_days_count'] = self.get_item(
+                    'elapsed_days_count', base_element)
 
             if (evaluation_item_name == 'good_rate'):
                 if ('good_count' not in evaluation_items_config or 'bad_count' not in evaluation_items_config):
@@ -166,7 +200,27 @@ class Av:
 
         return ''
 
-    def get_links(self):
+    def merge_page_im_links(self, page_links, im_links):
+        links = []
+        links_len = min(len(page_links), len(im_links))
+
+        for index in range(links_len):
+            links.append({
+                'page_link': page_links[index],
+                'im_link': self.format_im_link(im_links[index]),
+            })
+
+        return links
+
+    def extract_links(self, links, need_word):
+        # listを使って毎度毎度配列を初期化している。出ないと、ループ中に配列を削除する処理においてはインデックスがずれる恐れがある。
+        for link in list(links):
+            if (need_word not in link['page_link']):
+                links.remove(link)
+
+        return links
+
+    def get_links(self, base_element=None):
         links = []
 
         if ('links' not in self.theme['items']):
@@ -174,21 +228,17 @@ class Av:
             return links
 
         links_conf = self.theme['items']['links']
-        for link_name in links_conf:
-            if (link_name == 'page_link'):
-                page_links = self.get_items('page_link')
-            if (link_name == 'im_link'):
-                im_links = self.get_items('im_link')
-
-        # 動画リンクとサムネイル画像のリンクをセットにしたオブジェクトの形にする
         try:
-            for (index, num) in enumerate(page_links):
-                links.append({
-                    'page_link': page_links[index],
-                    'im_link': self.format_im_link(im_links[index]),
-                })
+            for link_name in links_conf:
+                if (link_name == 'page_link'):
+                    page_links = self.get_items('page_link', base_element)
+                if (link_name == 'im_link'):
+                    im_links = self.get_items('im_link', base_element)
+
+            links = self.merge_page_im_links(page_links, im_links)
         except Exception as e:
             print('動画リンクとサムネイル画像のリンクが正しく取得できていません。')
+            print(sys._getframe().f_code.co_name)
             print(str(e))
 
         return links
@@ -318,7 +368,10 @@ class Av:
         evaluation_config = self.theme['items']['evaluation_items']
 
         for evaluation_item_name in evaluation_items:
-            if ('count' in evaluation_item_name):
+            if (evaluation_item_name == 'elapsed_days_count'):
+                if (self.validate_elapsed_days_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                    return False
+            elif ('count' in evaluation_item_name):
                 if (self.validate_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
                     return False
             elif ('rate' in evaluation_item_name):

@@ -2,6 +2,7 @@ from googletrans.models import Translated
 from av import Av
 from selenium.webdriver.common.by import By
 from googletrans import Translator
+import sys
 
 translator = Translator()
 
@@ -16,20 +17,20 @@ class Pornhub(Av):
 
         return translated
 
+    def translate_need_item_in_contents(self, item_name, contents):
+        if (item_name in self.theme['items']['need_items']):
+            for index, content in enumerate(contents):
+                contents[index][item_name] = self.get_translated_text(
+                    content[item_name])
+
+        return contents
+
     def get_links(self, url=''):
         if url != '':
             self.driver.get(url)
 
-        # 特定のurlが指定が指定された場合、そこのページの要素に'pcVideoListItem'というセレクタが必ず存在するとは言えないつまりエラーが起こる可能性があります。
-        items = self.driver.find_elements_by_class_name('pcVideoListItem')
-        links = []
-        for item in items:
-            a_tag = item.find_element(By.TAG_NAME, 'a')
-            img_tag = item.find_element(By.TAG_NAME, 'img')
-            links.append({
-                'page_link': a_tag.get_attribute('href'),
-                'im_link': img_tag.get_attribute('src')
-            })
+        links = super().get_links()
+        links = self.extract_links(links, 'view_video')
 
         return links
 
@@ -43,11 +44,8 @@ class Pornhub(Av):
         # 質の高い動画を抽出
         contents = super().get_contents(links)
 
-        # 「need_items」にtitle当項目がセットされていたら、それを日本語に翻訳する。
-        if ('title' in self.theme['items']['need_items']):
-            for index, content in enumerate(contents):
-                contents[index]['title'] = self.get_translated_text(
-                    content['title'])
+        # 指定したneed_itemを日本語に翻訳する。
+        contents = self.translate_need_item_in_contents('title', contents)
 
         # ブラウザを閉じる
         self.driver.quit()

@@ -5,21 +5,12 @@ import sys
 
 
 class Nukisuto(Av):
-    def extract_links(self, links):
-        del_indexes = []
-        for index, link in enumerate(links):
-            if (self.theme['base_url'] not in link['page_link']):
-                del_indexes.append(index)
-        del links[del_indexes[0]:del_indexes[-1]+1]
-
-        return links
-
     def get_links(self, url=''):
         if url != '':
             self.driver.get(url)
 
         links = super().get_links()
-        links = self.extract_links(links)
+        links = self.extract_links(links, self.theme['base_url'])
 
         return links
 

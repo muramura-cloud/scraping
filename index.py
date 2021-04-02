@@ -10,11 +10,6 @@ import datetime
 import time
 import sys
 
-sugirl = Sugirl('sugirl')
-contents = sugirl.get_contents()
-print(contents)
-sys.exit()
-
 
 def job():
     try:
@@ -23,6 +18,8 @@ def job():
         nukisuto = Nukisuto('nukisuto')
         iqoo = Iqoo('iqoo')
 
+        # ぶっちゃけ、AVクラスだけで全部完結するかもしれない。
+        # AVのなかで小クラスをインスタンスかして、コンテンツを取得して、配列にして返す。
         write_contents = [
             {
                 'theme': nukisuto.theme,

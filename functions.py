@@ -10,6 +10,7 @@ def is_empty_obj(obj):
     if (not obj):
         return True
 
+    # これ多分any型を使えばもっと綺麗にかける。
     for key in obj:
         if (is_empty(obj[key])):
             return True
@@ -18,6 +19,9 @@ def is_empty_obj(obj):
 
 
 def to_int(value):
+    if (type(value) == int):
+        return value
+
     return int(re.sub("\\D", "", value))
 
 

@@ -99,7 +99,7 @@ class Av:
 
     def validate_count(self, evaluation_item, count):
         try:
-            if (count == ''):
+            if (is_empty(count)):
                 print(evaluation_item['name']+'が取得できていない。')
                 return False
 
@@ -162,25 +162,8 @@ class Av:
         evaluation_items = {}
 
         evaluation_items_config = self.theme['items']['evaluation_items']
-        for evaluation_item_name in evaluation_items_config:
-            # これ全部同じことやってない？
-            if (evaluation_item_name == 'good_count'):
-                evaluation_items['good_count'] = self.get_item(
-                    'good_count', base_element)
-
-            if (evaluation_item_name == 'bad_count'):
-                evaluation_items['bad_count'] = self.get_item(
-                    'bad_count', base_element)
-
-            if (evaluation_item_name == 'view_count'):
-                evaluation_items['view_count'] = self.get_item(
-                    'view_count', base_element)
-
-            if (evaluation_item_name == 'elapsed_days_count'):
-                evaluation_items['elapsed_days_count'] = self.get_item(
-                    'elapsed_days_count', base_element)
-
-            if (evaluation_item_name == 'good_rate'):
+        for item_name in evaluation_items_config:
+            if (item_name == 'good_rate'):
                 if ('good_count' not in evaluation_items_config or 'bad_count' not in evaluation_items_config):
                     print('高評価数と低評価数を取得する際の設定情報がありません。評価率を取得するにはそれら二つが必要です。')
 
@@ -188,6 +171,9 @@ class Av:
                 bad_count = self.get_item('bad_count', base_element)
                 evaluation_items['good_rate'] = self.get_rate(
                     good_count, bad_count)
+
+            evaluation_items[item_name] = self.get_item(
+                item_name, base_element)
 
         return evaluation_items
 
@@ -367,6 +353,7 @@ class Av:
     def evaluate(self, evaluation_items):
         evaluation_config = self.theme['items']['evaluation_items']
 
+        # このifの判定は「not」にしたほうが綺麗かも
         for evaluation_item_name in evaluation_items:
             if (evaluation_item_name == 'elapsed_days_count'):
                 if (self.validate_elapsed_days_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):

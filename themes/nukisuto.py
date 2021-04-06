@@ -1,6 +1,4 @@
-from contextlib import contextmanager
 from av import Av
-from selenium.webdriver.common.by import By
 import sys
 
 

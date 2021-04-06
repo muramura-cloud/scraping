@@ -1,21 +1,12 @@
 from functions import to_int
+# from themes.nukisuto import Nukisuto
 from datetime import datetime
 
-number = '13,451'
+str = 'nukisuto'
+
+class_name = str.capitalize()
 
 
-# print(type(to_int(number)))
+from themes.str import class_name
 
-date = '2021.3.29'
-date_list = date.split('.')
-print(date_list)
-d = datetime(int(date_list[0]), int(date_list[1]), int(date_list[2]))
-print(d)
-
-now = datetime.now()
-print(now)
-
-elapse = (now-d).days
-print(type(elapse))
-
-print(int(1))
+print(nukisuto)

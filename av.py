@@ -1,10 +1,10 @@
+import sys
 from selenium import webdriver
 from av_config import av_config
 from functions import is_empty
 from functions import is_empty_obj
 from functions import to_int
 from functions import get_elapsed_day_count
-import sys
 
 # 引数に所々セットされている「base_element」は探索の起点となる。
 # セットしない場合は、ベースページがからの要素の探索となる。
@@ -15,12 +15,10 @@ class Av:
         self.driver = {}
         self.theme = {}
         if(self.set_av_config(theme)):
-            # ブラウザを開く。
             self.open_browser()
-            # ベースページを開いておく。。
             self.driver.get(self.theme['base_url'])
         else:
-            print('テーマの設定に失敗しました。')
+            print('テーマ設定に失敗しました。')
 
             pass
 
@@ -45,7 +43,7 @@ class Av:
 
                 return True
 
-        if(self.theme == {}):
+        if(not self.theme):
             print('指定されたテーマに対応していません。対応しているテーマは以下です。')
             print(list(av_config))
 
@@ -79,7 +77,7 @@ class Av:
                     value = self.theme['items'][items_name][item_name]['value']
                     attr = self.theme['items'][items_name][item_name]['attr']
         except Exception as e:
-            print('要素及びその値の抽出に必要なデータが取得されていません。おそらく、指定されたアイテムが設定ファイルに存在しません。')
+            print('要素及びその値の抽出に必要なデータが取得できません。指定されたアイテムが設定ファイルに存在しません。')
             print(sys._getframe().f_code.co_name)
             print(e)
 
@@ -167,13 +165,15 @@ class Av:
                 if ('good_count' not in evaluation_items_config or 'bad_count' not in evaluation_items_config):
                     print('高評価数と低評価数を取得する際の設定情報がありません。評価率を取得するにはそれら二つが必要です。')
 
+                    return {}
+
                 good_count = self.get_item('good_count', base_element)
                 bad_count = self.get_item('bad_count', base_element)
                 evaluation_items['good_rate'] = self.get_rate(
                     good_count, bad_count)
-
-            evaluation_items[item_name] = self.get_item(
-                item_name, base_element)
+            else:
+                evaluation_items[item_name] = self.get_item(
+                    item_name, base_element)
 
         return evaluation_items
 
@@ -199,7 +199,6 @@ class Av:
         return links
 
     def extract_links(self, links, need_word):
-        # listを使って毎度毎度配列を初期化している。出ないと、ループ中に配列を削除する処理においてはインデックスがずれる恐れがある。
         for link in list(links):
             if (need_word not in link['page_link']):
                 links.remove(link)
@@ -353,16 +352,15 @@ class Av:
     def evaluate(self, evaluation_items):
         evaluation_config = self.theme['items']['evaluation_items']
 
-        # このifの判定は「not」にしたほうが綺麗かも
         for evaluation_item_name in evaluation_items:
             if (evaluation_item_name == 'elapsed_days_count'):
-                if (self.validate_elapsed_days_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                if (not self.validate_elapsed_days_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name])):
                     return False
             elif ('count' in evaluation_item_name):
-                if (self.validate_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                if (not self.validate_count(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name])):
                     return False
             elif ('rate' in evaluation_item_name):
-                if (self.validate_rate(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name]) == False):
+                if (not self.validate_rate(evaluation_config[evaluation_item_name], evaluation_items[evaluation_item_name])):
                     return False
 
         print('基準クリア')

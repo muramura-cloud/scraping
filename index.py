@@ -1,35 +1,32 @@
 from gspreads.av_gspread import AV_Gspread
-# いちいち全部インポートするのめんどくさいな
-from themes.nukisuto import Nukisuto
-from themes.iqoo import Iqoo
-from themes.pornhub import Pornhub
-from themes.javym import Javym
-from themes.sugirl import Sugirl
+import importlib
 import schedule
 import datetime
 import time
 import sys
 
 
+# 理想は取得したいテーマの名前を指定するだけで、それがシートに書き込まれる。
+themes = ['nukisuto', 'pornhub', 'iqoo']
+
+
 def job():
+    write_contents = []
+
     try:
         print('-------------スクレイピング開始--------------')
         print(datetime.datetime.now())
-        nukisuto = Nukisuto('nukisuto')
-        iqoo = Iqoo('iqoo')
+        for theme in themes:
+            # テーマに合わせた小クラスをインスタンス化
+            module = importlib.import_module('themes.'+theme)
+            theme_class = eval('module.'+theme.capitalize())(theme)
 
-        # ぶっちゃけ、AVクラスだけで全部完結するかもしれない。
-        # AVのなかで小クラスをインスタンスかして、コンテンツを取得して、配列にして返す。
-        write_contents = [
-            {
-                'theme': nukisuto.theme,
-                'contents': nukisuto.get_contents()
-            },
-            {
-                'theme': iqoo.theme,
-                'contents': iqoo.get_contents()
+            content = {
+                'theme': theme_class.theme,
+                'content': theme_class.get_contents()
             }
-        ]
+
+            write_contents.append(content)
 
         jsonf = 'av-sheet-5e65e23ebfc9.json'
         spread_sheet_key = '1UAKduCQdJp1GEQioTYEde_EPXDfL9DnhvSxvUCX6Ovs'

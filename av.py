@@ -1,6 +1,6 @@
 import sys
 from selenium import webdriver
-from av_config import av_config
+from config.av_config import av_config
 from functions import is_empty
 from functions import is_empty_obj
 from functions import to_int

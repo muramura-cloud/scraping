@@ -1,4 +1,6 @@
 from gspreads.av_gspread import AV_Gspread
+from config.config_spread_sheet import spread_sheet_key
+from config.config_spread_sheet import jsonf
 import importlib
 import schedule
 import datetime
@@ -8,8 +10,6 @@ import sys
 
 # 抽出したいテーマの名前(av_config)を指定する
 themes = ['nukisuto', 'pornhub', 'iqoo']
-jsonf = 'av-sheet-5e65e23ebfc9.json'
-spread_sheet_key = '1UAKduCQdJp1GEQioTYEde_EPXDfL9DnhvSxvUCX6Ovs'
 
 
 def job():

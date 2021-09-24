@@ -9,7 +9,7 @@ import sys
 
 
 # 抽出したいテーマの名前(av_config)を指定する
-themes = ['nukisuto', 'pornhub', 'iqoo']
+themes = ['iqoo']
 
 
 def job():
